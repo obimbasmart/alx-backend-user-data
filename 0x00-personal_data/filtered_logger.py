@@ -6,16 +6,10 @@ from typing import (List)
 import re
 
 
-def filter_datum(fields: List, redaction: str,
+def filter_datum(fields: List[str], redaction: str,
                  msg: str, seperator: str) -> str:
     """
-    Obscure personal data
-
-    Args:
-        @fields: list representing all fields to obfuscate
-        @redaction: what the field will be obfuscated with
-        @msg: log line
-        @seperator: character separating all fields in the log line
+    Obscure personal data by replacing each field with @redaction
     """
     for field in fields:
         msg = re.sub(r'({}=).*?{}'.format(field, seperator),
