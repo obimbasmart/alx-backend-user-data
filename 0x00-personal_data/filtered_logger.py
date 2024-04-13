@@ -19,6 +19,6 @@ def filter_datum(fields: List, redaction: str,
     """
     for field in fields:
         msg = re.sub(r'({}=).*?{}'.format(field, seperator),
-                     r'\1xxx;',
+                     r'\1{}{}'.format(redaction, seperator),
                      msg)
     return msg
