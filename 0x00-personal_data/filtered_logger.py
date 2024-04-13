@@ -3,11 +3,13 @@
 """Regex-ing: obfuscated personal identifiable data"""
 
 import logging
-from typing import (List)
+from typing import (List, Sequence)
 import re
 
+PII_FIELDS = ('email', 'phone', 'ssn', 'password', 'ip')
 
-def filter_datum(fields: List[str], redaction: str,
+
+def filter_datum(fields: Sequence[str], redaction: str,
                  message: str, separator: str) -> str:
     """
     Obscure personal data by replacing each field with @redaction
@@ -19,6 +21,15 @@ def filter_datum(fields: List[str], redaction: str,
     return message
 
 
+def get_logger() -> logging.Logger:
+    """create a logger"""
+    logger = logging.Logger("user_data", logging.INFO)
+    logger.propagate = False
+    handler = logging.StreamHandler()
+    handler.setFormatter(RedactingFormatter(PII_FIELDS))
+    return logger
+
+
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
         """
@@ -27,7 +38,7 @@ class RedactingFormatter(logging.Formatter):
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
-    def __init__(self, fields: List[str]):
+    def __init__(self, fields: Sequence[str]):
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.__fields = fields
         logging.basicConfig(format=RedactingFormatter.FORMAT)
