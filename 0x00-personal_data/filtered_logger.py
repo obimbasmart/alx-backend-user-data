@@ -6,7 +6,7 @@ import logging
 from typing import (List, Sequence)
 import re
 
-PII_FIELDS = ('email', 'phone', 'ssn', 'password', 'ip')
+PII_FIELDS = ('email', 'phone', 'ssn', 'name', 'ip')
 
 
 def filter_datum(fields: Sequence[str], redaction: str,
