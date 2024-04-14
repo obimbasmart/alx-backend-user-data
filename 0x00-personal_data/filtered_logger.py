@@ -6,9 +6,9 @@ import logging
 from typing import (List, Sequence)
 import re
 import mysql.connector
-import os
+from os import getenv
 
-PII_FIELDS = ('email', 'phone', 'ssn', 'password', 'name')
+PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
 
 
 def filter_datum(fields: Sequence[str], redaction: str,
@@ -30,17 +30,29 @@ def get_logger() -> logging.Logger:
     logger.propagate = False
     handler = logging.StreamHandler()
     handler.setFormatter(RedactingFormatter(PII_FIELDS))
+    logger.addHandler(handler)
     return logger
 
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """connect to mysql db"""
-    passwd = os.getenv('PERSONAL_DATA_DB_PASSWORD', 'root')
-    username = os.getenv('PERSONAL_DATA_DB_USERNAME', '')
-    host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
-    db = os.getenv('PERSONAL_DATA_DB_NAME')
-    return mysql.connector.connect(user=username, password=passwd,
-                                   host=host, database=db)
+    return mysql.connector.connect(
+        password=getenv('PERSONAL_DATA_DB_PASSWORD', 'root'),
+        username=getenv('PERSONAL_DATA_DB_USERNAME', ''),
+        host=getenv('PERSONAL_DATA_DB_HOST', 'localhost'),
+        database=getenv('PERSONAL_DATA_DB_NAME')
+    )
+
+
+def main() -> None:
+    """display user data"""
+    logger = get_logger()
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users;")
+    for user in cursor:
+        info = ' '.join([f'{key}={val};' for key, val in user.items()])
+        logger.info(info)
 
 
 class RedactingFormatter(logging.Formatter):
@@ -62,3 +74,7 @@ class RedactingFormatter(logging.Formatter):
                             self.REDACTION,
                             super().format(record),
                             self.SEPARATOR)
+
+
+if __name__ == "__main__":
+    main()
