@@ -4,6 +4,7 @@
 """Basic Auth Class"""
 
 from flask import request
+import re
 from typing import (
     List,
     TypeVar
@@ -19,7 +20,13 @@ class Auth:
             return True
         if not path.endswith("/"):
             path += "/"
-        return path not in excluded_paths
+
+        for ex_path in excluded_paths:
+            pattern = re.escape(ex_path).replace(r'\*', r'.*')
+            if re.match(pattern, path):
+                return False
+
+        return True
 
     def authorization_header(self, request=None) -> str:
         """--- --- ---"""
