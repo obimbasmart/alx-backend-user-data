@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 
+"""Basic Auth Class"""
+
 from flask import request
 from typing import (
     List,
