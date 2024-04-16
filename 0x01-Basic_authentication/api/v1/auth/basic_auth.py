@@ -4,6 +4,8 @@
 """
 
 from .auth import Auth
+import base64
+from binascii import Error as NotBase64Error
 
 
 class BasicAuth(Auth):
@@ -19,3 +21,16 @@ class BasicAuth(Auth):
 
             return None
         return authorization_header.split("Basic", 1)[1].strip()
+
+    def decode_base64_authorization_header(
+            self,
+            base64_authorization_header: str) -> str:
+        """Base64 decode"""
+        if (not base64_authorization_header or
+                not isinstance(base64_authorization_header, str)):
+            return None
+        try:
+            return base64.b64decode(base64_authorization_header) \
+                .decode('utf-8')
+        except NotBase64Error:
+            return None
