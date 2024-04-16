@@ -5,6 +5,9 @@
 
 from .auth import Auth
 import base64
+from models.user import User
+from typing import TypeVar
+import hashlib
 
 
 class BasicAuth(Auth):
@@ -44,3 +47,23 @@ class BasicAuth(Auth):
 
             return (None, None)
         return tuple(decoded_base64_authorization_header.split(':'))
+
+    def user_object_from_credentials(
+            self,
+            user_email: str, user_pwd: str) -> TypeVar('User'):
+        """return user instance"""
+        if (user_email is None or
+            not isinstance(user_email, str) or
+            user_pwd is None or
+                not isinstance(user_pwd, str)):
+
+            return None
+
+        if not User.search({"email": user_email}):
+            return None
+
+        user = User.search({"email": user_email})[0]
+        if user.password != hashlib.sha256(user_pwd.encode()) \
+                .hexdigest().lower():
+            return None
+        return user
