@@ -5,7 +5,6 @@
 
 from .auth import Auth
 import base64
-# from binascii import Error as NotBase64Error
 
 
 class BasicAuth(Auth):
@@ -34,3 +33,14 @@ class BasicAuth(Auth):
                 .decode('utf-8')
         except Exception:
             return None
+
+    def extract_user_credentials(
+            self,
+            decoded_base64_authorization_header: str) -> (str, str):
+        """return user email and password"""
+        if (decoded_base64_authorization_header is None or
+                not isinstance(decoded_base64_authorization_header, str)
+                or ":" not in decoded_base64_authorization_header):
+
+            return (None, None)
+        return tuple(decoded_base64_authorization_header.split(':'))
