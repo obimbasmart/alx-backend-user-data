@@ -13,6 +13,17 @@ import hashlib
 class BasicAuth(Auth):
     """Basic authentication"""
 
+    def current_user(self, request=None) -> TypeVar('User'):
+        """get current user"""
+        auth_header = self.authorization_header(request)
+        auth_header_value = self.extract_base64_authorization_header(
+            auth_header)
+        decoded_auth_header = self.decode_base64_authorization_header(
+            auth_header_value)
+        user_email, user_pwd = self.extract_user_credentials(
+            decoded_auth_header)
+        return self.user_object_from_credentials(user_email, user_pwd)
+
     def extract_base64_authorization_header(self,
                                             authorization_header: str) -> str:
         """return Base64 of auth header"""
