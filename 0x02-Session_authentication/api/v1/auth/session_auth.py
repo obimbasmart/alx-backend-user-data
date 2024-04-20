@@ -4,12 +4,12 @@
 """Session Authentication
 """
 
-from api.v1.auth.basic_auth import BasicAuth
+from api.v1.auth.auth import Auth
 from typing import Dict
 import uuid
 
 
-class SessionAuth(BasicAuth):
+class SessionAuth(Auth):
     """Session Authentication"""
     pass
 
