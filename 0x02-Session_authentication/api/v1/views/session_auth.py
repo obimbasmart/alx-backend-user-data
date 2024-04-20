@@ -30,9 +30,20 @@ def login():
     if not user.is_valid_password(password):
         return jsonify({"error": "wrong password"}), 401
 
-    from api.v1.auth.session_auth import SessionAuth
-    session = SessionAuth()
-    session_id = session.create_session(user.id)
+    from api.v1.app import auth
+    session_id = auth.create_session(user.id)
     response = make_response(jsonify(user.to_json()))
     response.set_cookie(getenv("SESSION_NAME"), session_id)
     return response
+
+
+@app_views.route("/api/v1/auth_session/logout",
+                 strict_slashes=False,
+                 methods=["DELETE"])
+def logout():
+    """logout user"""
+    from api.v1.app import auth
+    res = auth.destroy_session(request)
+    if not res:
+        abort(404)
+    return jsonify({}), 200
