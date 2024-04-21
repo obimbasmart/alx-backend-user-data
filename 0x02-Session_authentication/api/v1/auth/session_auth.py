@@ -38,7 +38,7 @@ class SessionAuth(Auth):
 
     def destroy_session(self, request=None):
         """delete user session"""
-        if request is None or self.session_cookie(request):
+        if request is None or self.session_cookie(request) is None:
             return False
         session_id = self.session_cookie(request)
         user_id = self.user_id_for_session_id(session_id)
