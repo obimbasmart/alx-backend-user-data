@@ -12,7 +12,6 @@ from models.user import User
 
 class SessionAuth(Auth):
     """Session Authentication"""
-    pass
 
     user_id_by_session_id: Dict = {}
 
@@ -32,8 +31,9 @@ class SessionAuth(Auth):
 
     def current_user(self, request=None):
         """return user instance base on cookie value"""
-        user_id = self.user_id_by_session_id.get(
-            request.cookies.get("_my_session_id"))
+        user_id = self.user_id_for_session_id(
+            self.session_cookie(request))
+        print(user_id)
         return User.get(user_id)
 
     def destroy_session(self, request=None):
