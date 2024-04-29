@@ -8,4 +8,5 @@ import bcrypt
 
 def _hash_password(password: str) -> bytes:
     """hash password"""
-    return bcrypt.hashpw(password.encode(), salt="gues it")
+    encoded_pass = password.encode()
+    return bcrypt.hashpw(encoded_pass, salt="gues it")
