@@ -16,6 +16,11 @@ def _hash_password(password: str) -> bytes:
                          salt=bcrypt.gensalt())
 
 
+def _generate_uuid() -> str:
+    """generate uuid"""
+    return uuid4().hex
+
+
 class Auth:
     """Auth class to interact with the authentication database.
     """
@@ -45,7 +50,3 @@ class Auth:
                 return bcrypt.checkpw(password.encode('utf-8'),
                                       user.hashed_password)
         return False
-
-    def _generate_uuid(self) -> str:
-        """generate uuid"""
-        return uuid4().hex
