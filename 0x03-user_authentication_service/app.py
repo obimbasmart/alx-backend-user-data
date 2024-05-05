@@ -2,7 +2,7 @@
 
 """Basic flask app"""
 
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, make_response, abort
 
 from auth import Auth
 
@@ -38,6 +38,7 @@ def login():
         resp = make_response(jsonify({"email": email, "message": "logged in"}))
         resp.set_cookie('session_id', session_id)
         return resp
+    abort(401)
 
 
 if __name__ == "__main__":
